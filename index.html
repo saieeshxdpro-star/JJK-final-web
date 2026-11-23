@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>領域展開「無量空処」 | Domain Expansion: Unlimited Void</title>
+    <link rel="icon" href="data:,">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@300;400;500;600&family=Noto+Serif+JP:wght@700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #020308;
+            font-family: 'Inter', sans-serif;
+            color: #f8fafc;
+        }
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+        }
+        .font-jp { font-family: 'Noto Serif JP', serif; }
+        .font-cinzel { font-family: 'Cinzel', serif; }
+        .font-mono-tech { font-family: 'JetBrains Mono', monospace; }
+
+        /* Ultra-clean translucent obsidian glass */
+        .jjk-glass {
+            background: rgba(3, 5, 13, 0.58);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.65);
+        }
+
+        .pill-btn {
+            transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            background: rgba(6, 10, 22, 0.65);
+        }
+        .pill-btn:hover {
+            transform: translateY(-1px);
+            border-color: rgba(255, 255, 255, 0.55);
+            background: rgba(15, 23, 42, 0.85);
+        }
+        .pill-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* Active states per technique */
+        .pill-odyssey.active {
+            border-color: #7dd3fc;
+            box-shadow: 0 0 18px rgba(56, 189, 248, 0.45), inset 0 0 10px rgba(56, 189, 248, 0.25);
+        }
+        .pill-sixeyes.active {
+            border-color: #bae6fd;
+            box-shadow: 0 0 18px rgba(186, 230, 253, 0.5), inset 0 0 10px rgba(14, 165, 233, 0.3);
+        }
+        .pill-void.active {
+            border-color: #ffffff;
+            box-shadow: 0 0 22px rgba(255, 255, 255, 0.55), inset 0 0 12px rgba(129, 140, 248, 0.35);
+        }
+        .pill-blue.active {
+            border-color: #00d2ff;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.6), inset 0 0 12px rgba(0, 130, 255, 0.35);
+        }
+        .pill-red.active {
+            border-color: #ef4444;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.6), inset 0 0 12px rgba(220, 38, 38, 0.35);
+        }
+        .pill-purple.active {
+            border-color: #d946ef;
+            box-shadow: 0 0 24px rgba(192, 38, 211, 0.65), inset 0 0 14px rgba(168, 85, 247, 0.4);
+        }
+
+        /* Custom sleek sliders */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 3px;
+            background: rgba(148, 163, 184, 0.25);
+            border-radius: 999px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #38bdf8;
+            box-shadow: 0 0 8px #00d2ff;
+            cursor: pointer;
+            border: 1.5px solid #ffffff;
+        }
+
+        /* Dramatic Anime Cut-in Kanji Overlay */
+        #anime-callout {
+            pointer-events: none;
+            opacity: 0;
+            transform: scale(1.08);
+            transition: opacity 0.28s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #anime-callout.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+    </style>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+<body>
+
+    <!-- MINIMAL NON-INTRUSIVE JJK HUD (Leaves >95% of viewport pure 3D particle art) -->
+    <div id="hud-root" class="fixed inset-0 z-10 pointer-events-none flex flex-col justify-between p-4 sm:p-5">
+        
+        <!-- Top Bar: Minimalist Title Badge & Audio / Parameter Toggles -->
+        <div class="flex items-start justify-between gap-3">
+            <div class="jjk-glass rounded-2xl px-4 py-2.5 pointer-events-auto">
+                <div class="flex items-center gap-2">
+                    <span id="status-dot" class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
+                    <span id="realm-indicator" class="font-mono-tech text-[10px] tracking-[0.22em] text-sky-300 uppercase">
+                        GOJO SATORU // LIMITLESS
+                    </span>
+                </div>
+                <div class="flex items-baseline gap-2.5 mt-0.5">
+                    <h1 class="font-jp text-lg sm:text-2xl font-black tracking-widest text-white drop-shadow-[0_0_12px_rgba(56,189,248,0.65)]">
+                        無量空処
+                    </h1>
+                    <span class="font-cinzel text-[11px] sm:text-xs tracking-[0.2em] text-sky-200/80 uppercase">
+                        Unlimited Void
+                    </span>
+                </div>
+            </div>
+
+            <!-- Right Controls: Sound Toggle, Parameter Pill, Clean View -->
+            <div class="flex items-center gap-2 pointer-events-auto">
+                <button id="btn-audio" class="jjk-glass pill-btn rounded-full px-3.5 py-2 text-xs font-mono-tech text-slate-300 hover:text-white flex items-center gap-1.5 cursor-pointer" title="Toggle Cursed Energy Audio">
+                    <span id="audio-icon">🔇</span>
+                    <span class="hidden sm:inline" id="audio-label">AUDIO OFF</span>
+                </button>
+                <button id="btn-params" class="jjk-glass pill-btn rounded-full px-3.5 py-2 text-xs font-mono-tech text-sky-300 hover:text-white cursor-pointer" title="Adjust Simulation Parameters">
+                    PARAMS
+                </button>
+                <button id="btn-hide-hud" class="jjk-glass pill-btn rounded-full px-3 py-2 text-xs font-mono-tech text-slate-400 hover:text-white cursor-pointer" title="Hide HUD (H)">
+                    [H]
+                </button>
+            </div>
+        </div>
+
+        <!-- Center Cinematic Anime Callout -->
+        <div id="anime-callout" class="my-auto mx-auto text-center px-4">
+            <div id="callout-jp" class="font-jp text-3xl sm:text-5xl md:text-6xl font-black tracking-[0.22em] text-white drop-shadow-[0_0_28px_rgba(0,210,255,0.95)]">
+                領域展開「無量空処」
+            </div>
+            <div id="callout-en" class="font-cinzel text-[11px] sm:text-sm tracking-[0.35em] text-sky-200 uppercase mt-2 bg-black/55 backdrop-blur-md px-4 py-1 rounded-full border border-sky-400/30 inline-block">
+                Domain Expansion: Unlimited Void
+            </div>
+        </div>
+
+        <!-- Bottom Bar: Collapsible Sliders + Compact Cursed Technique Selector -->
+        <div class="flex flex-col items-center gap-2.5 w-full">
+            
+            <!-- Collapsible Parameter Popover (Closed by default so screen is unobstructed) -->
+            <div id="params-popover" class="jjk-glass rounded-2xl p-3.5 w-full max-w-xl pointer-events-auto hidden">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <div class="flex justify-between text-[10px] font-mono-tech text-sky-200 mb-1">
+                            <span>FLIGHT / FLOW</span>
+                            <span id="lbl-speed">0.65</span>
+                        </div>
+                        <input id="inp-speed" type="range" min="0.0" max="2.0" step="0.05" value="0.65">
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-[10px] font-mono-tech text-sky-200 mb-1">
+                            <span>CURSED VIBRANCE</span>
+                            <span id="lbl-vibrance">1.25</span>
+                        </div>
+                        <input id="inp-vibrance" type="range" min="0.6" max="2.0" step="0.05" value="1.25">
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-[10px] font-mono-tech text-sky-200 mb-1">
+                            <span>6-DOF CAMERA SWAY</span>
+                            <span id="lbl-sway">1.00</span>
+                        </div>
+                        <input id="inp-sway" type="range" min="0.0" max="2.0" step="0.05" value="1.0">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sleek Technique Pill Bar -->
+            <div class="jjk-glass rounded-2xl p-1.5 sm:p-2 pointer-events-auto max-w-full overflow-x-auto">
+                <div class="flex items-center gap-1.5 sm:gap-2 whitespace-nowrap">
+                    <button data-mode="odyssey" class="pill-btn pill-odyssey active rounded-xl px-3 py-1.5 text-xs font-medium cursor-pointer flex items-center gap-1.5">
+                        <span class="font-mono-tech text-[10px] text-sky-400">0</span>
+                        <span class="font-jp font-bold text-white">無下限巡航</span>
+                        <span class="hidden md:inline text-slate-400 text-[11px]">Full Odyssey</span>
+                    </button>
+
+                    <button data-mode="sixeyes" class="pill-btn pill-sixeyes rounded-xl px-3 py-1.5 text-xs font-medium cursor-pointer flex items-center gap-1.5">
+                        <span class="font-mono-tech text-[10px] text-cyan-300">1</span>
+                        <span class="font-jp font-bold text-cyan-200">六眼</span>
+                        <span class="hidden md:inline text-slate-400 text-[11px]">Six Eyes</span>
+                    </button>
+
+                    <button data-mode="void" class="pill-btn pill-void rounded-xl px-3 py-1.5 text-xs font-medium cursor-pointer flex items-center gap-1.5">
+                        <span class="font-mono-tech text-[10px] text-white">2</span>
+                        <span class="font-jp font-bold text-white">無量空処</span>
+                        <span class="hidden md:inline text-slate-300 text-[11px]">Unlimited Void</span>
+                    </button>
+
+                    <button data-mode="blue" class="pill-btn pill-blue rounded-xl px-3 py-1.5 text-xs font-medium cursor-pointer flex items-center gap-1.5">
+                        <span class="font-mono-tech text-[10px] text-sky-400">3</span>
+                        <span class="font-jp font-bold text-sky-300">蒼</span>
+                        <span class="hidden md:inline text-slate-400 text-[11px]">Lapse: Blue</span>
+                    </button>
+
+                    <button data-mode="red" class="pill-btn pill-red rounded-xl px-3 py-1.5 text-xs font-medium cursor-pointer flex items-center gap-1.5">
+                        <span class="font-mono-tech text-[10px] text-red-400">4</span>
+                        <span class="font-jp font-bold text-red-400">赫</span>
+                        <span class="hidden md:inline text-slate-400 text-[11px]">Reversal: Red</span>
+                    </button>
+
+                    <button data-mode="purple" class="pill-btn pill-purple rounded-xl px-3 py-1.5 text-xs font-medium cursor-pointer flex items-center gap-1.5">
+                        <span class="font-mono-tech text-[10px] text-fuchsia-400">5</span>
+                        <span class="font-jp font-bold text-fuchsia-300">虚式「茈」</span>
+                        <span class="hidden md:inline text-slate-400 text-[11px]">Hollow Purple</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Restore HUD Floating Pill (Only visible when HUD is hidden) -->
+    <button id="btn-show-hud" class="fixed bottom-4 right-4 z-20 jjk-glass pill-btn rounded-full px-3.5 py-1.5 text-[11px] font-mono-tech text-sky-300 hidden cursor-pointer">
+        HUD [H]
+    </button>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+        import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+        import { AfterimagePass } from 'three/addons/postprocessing/AfterimagePass.js';
+        import { RGBShiftShader } from 'three/addons/shaders/RGBShiftShader.js';
+        import { GPUComputationRenderer } from 'three/addons/misc/GPUComputationRenderer.js';
+
+        // =========================================================================
+        // 1. EXACT BASE CONFIG & INTERACTIVE JJK STATE
+        // =========================================================================
+        const COUNT = 20000;
+        const SPEED_MULT = 1;
+        const AUTO_SPIN = true;
+        const PHYSICS_MODE = 'lerp';
+        const STIFFNESS = 2;
+        const DAMPING = 0.08;
+        const NOISE_STRENGTH = 0;
+
+        const PARAMS = {
+            flightSpeed: 0.65,
+            camSway: 1.0,
+            aperture: 1.0,
+            vibrance: 1.25
+        };
+
+        const jjkState = {
+            mode: 'odyssey',        // 'odyssey' | 'sixeyes' | 'void' | 'blue' | 'red' | 'purple'
+            modeElapsed: 0.0,
+            invertFlash: 0.0,       // Iconic anime B&W negative flash when Domain Expansion hits
+            shockwaveForce: 0.0,
+            shockwaveRadius: 140.0,
+            mousePulse: 0.0
+        };
+
+        // =========================================================================
+        // 2. WEB AUDIO SYNTHESIZER (Cursed Energy Hum, Inversion Snap, Bass Blast)
+        // =========================================================================
+        class CursedAudioEngine {
+            constructor() {
+                this.ctx = null;
+                this.enabled = false;
+                this.droneGain = null;
+                this.droneOsc1 = null;
+                this.droneOsc2 = null;
+            }
+            toggle() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioCtx();
+                    this.setupDrone();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+                this.enabled = !this.enabled;
+                if (this.droneGain) {
+                    this.droneGain.gain.setTargetAtTime(this.enabled ? 0.11 : 0.0, this.ctx.currentTime, 0.25);
+                }
+                return this.enabled;
+            }
+            setupDrone() {
+                // Deep cosmic sub-bass drone of Unlimited Void
+                this.droneOsc1 = this.ctx.createOscillator();
+                this.droneOsc2 = this.ctx.createOscillator();
+                const filter = this.ctx.createBiquadFilter();
+                this.droneGain = this.ctx.createGain();
+
+                this.droneOsc1.type = 'sine';
+                this.droneOsc1.frequency.value = 46; // Deep F#1 sub-drone
+                this.droneOsc2.type = 'triangle';
+                this.droneOsc2.frequency.value = 92.5;
+
+                filter.type = 'lowpass';
+                filter.frequency.value = 160;
+                this.droneGain.gain.value = 0.0;
+
+                this.droneOsc1.connect(filter);
+                this.droneOsc2.connect(filter);
+                filter.connect(this.droneGain);
+                this.droneGain.connect(this.ctx.destination);
+
+                this.droneOsc1.start();
+                this.droneOsc2.start();
+            }
+            playTechnique(type) {
+                if (!this.enabled || !this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                if (type === 'void' || type === 'odyssey') {
+                    // Crystalline high chime + deep vacuum drop (Domain Expansion snap)
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(1320, now);
+                    osc.frequency.exponentialRampToValueAtTime(55, now + 0.85);
+                    gain.gain.setValueAtTime(0.22, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
+                } else if (type === 'sixeyes') {
+                    // Six Eyes celestial harmonic shimmer
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(880, now);
+                    osc.frequency.exponentialRampToValueAtTime(1760, now + 0.5);
+                    gain.gain.setValueAtTime(0.14, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+                } else if (type === 'blue') {
+                    // Imploding gravitational suction pitch drop
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(320, now);
+                    osc.frequency.exponentialRampToValueAtTime(38, now + 0.75);
+                    gain.gain.setValueAtTime(0.16, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+                } else if (type === 'red') {
+                    // Violent shockwave boom
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(140, now);
+                    osc.frequency.exponentialRampToValueAtTime(28, now + 0.65);
+                    gain.gain.setValueAtTime(0.24, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+                } else if (type === 'purple') {
+                    // Hollow Purple resonant spatial tear
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.linearRampToValueAtTime(660, now + 0.35);
+                    osc.frequency.exponentialRampToValueAtTime(32, now + 1.1);
+                    gain.gain.setValueAtTime(0.24, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 1.15);
+                }
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 1.2);
+            }
+        }
+        const audioEngine = new CursedAudioEngine();
+
+        // =========================================================================
+        // 3. THREE.JS SCENE, CAMERA, RENDERER & ORBIT CONTROLS
+        // =========================================================================
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.set(0, 0, 100);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        document.body.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.autoRotate = AUTO_SPIN;
+        controls.autoRotateSpeed = 1.4;
+
+        // =========================================================================
+        // 4. POST PROCESSING PIPELINE (Exact Architecture + Domain Inversion Pulse)
+        // =========================================================================
+        const composer = new EffectComposer(renderer);
+        composer.addPass(new RenderPass(scene, camera));
+
+        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+        bloomPass.strength = 1.05;
+        bloomPass.radius = 0.32;
+        bloomPass.threshold = 0.15;
+        composer.addPass(bloomPass);
+
+        // 1. MOTION TRAILS
+        const afterimagePass = new AfterimagePass(0.28);
+        composer.addPass(afterimagePass);
+
+        // 2. RADIAL BLUR
+        const RadialBlurShader = {
+            uniforms: {
+                "tDiffuse": { value: null },
+                "strength": { value: 0.16 },
+                "center": { value: new THREE.Vector2(0.5, 0.5) }
+            },
+            vertexShader: `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform sampler2D tDiffuse;
+                uniform float strength;
+                uniform vec2 center;
+                varying vec2 vUv;
+                void main() {
+                    if (strength <= 0.0) {
+                        gl_FragColor = texture2D(tDiffuse, vUv);
+                        return;
+                    }
+                    vec4 color = vec4(0.0);
+                    vec2 dir = center - vUv;
+                    float fi = 0.0;
+                    for (int i = 0; i < 12; i++) {
+                        float scale = 1.0 - strength * (fi / 11.0) * 0.1;
+                        vec2 sampleUv = center - dir * scale;
+                        vec4 colorSample = texture2D(tDiffuse, sampleUv);
+                        color += colorSample;
+                        fi += 1.0;
+                    }
+                    gl_FragColor = color / 12.0;
+                }
+            `
+        };
+        const radialBlurPass = new ShaderPass(RadialBlurShader);
+        composer.addPass(radialBlurPass);
+
+        // 3. BACKGROUND COMPOSITE + ANIME NEGATIVE INVERSION FLASH
+        const BgCompositeShader = {
+            uniforms: {
+                "tDiffuse": { value: null },
+                "bgColor": { value: new THREE.Color('#020308') },
+                "uInvert": { value: 0.0 }
+            },
+            vertexShader: `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+                }
+            `,
+            fragmentShader: `
+                uniform sampler2D tDiffuse;
+                uniform vec3 bgColor;
+                uniform float uInvert;
+                varying vec2 vUv;
+                void main() {
+                    vec4 texel = texture2D( tDiffuse, vUv );
+                    float alpha = clamp(max(texel.r, max(texel.g, texel.b)), 0.0, 1.0);
+                    vec3 col = texel.rgb + bgColor * (1.0 - alpha);
+                    if (uInvert > 0.005) {
+                        vec3 inv = vec3(1.0) - col;
+                        col = mix(col, inv, clamp(uInvert, 0.0, 1.0));
+                    }
+                    gl_FragColor = vec4( col, 1.0 );
+                }
+            `
+        };
+        const bgCompositePass = new ShaderPass(BgCompositeShader);
+        composer.addPass(bgCompositePass);
+
+        // 4. VIGNETTE
+        const CustomVignetteShader = {
+            uniforms: {
+                'tDiffuse': { value: null },
+                'offset': { value: 1.08 },
+                'darkness': { value: 1.35 },
+                'color': { value: new THREE.Color('#020308') }
+            },
+            vertexShader: `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+                }
+            `,
+            fragmentShader: `
+                uniform float offset;
+                uniform float darkness;
+                uniform vec3 color;
+                uniform sampler2D tDiffuse;
+                varying vec2 vUv;
+                void main() {
+                    vec4 texel = texture2D( tDiffuse, vUv );
+                    vec2 uv = ( vUv - vec2( 0.5 ) ) * vec2( offset );
+                    float mixFactor = clamp(dot(uv, uv) * darkness, 0.0, 1.0);
+                    gl_FragColor = vec4( mix( texel.rgb, color, mixFactor ), texel.a );
+                }
+            `
+        };
+        const vignettePass = new ShaderPass(CustomVignetteShader);
+        composer.addPass(vignettePass);
+
+        // 5. RGB SHIFT (Six Eyes Chromatic Aberration)
+        const rgbShiftPass = new ShaderPass(RGBShiftShader);
+        rgbShiftPass.uniforms['amount'].value = 0.0022;
+        composer.addPass(rgbShiftPass);
+
+        composer.passes[composer.passes.length - 1].renderToScreen = true;
+
+        // =========================================================================
+        // 5. CENTRAL EVENT HORIZON SINGULARITY MESH (Unlimited Void Black Core)
+        // =========================================================================
+        const singularityMesh = new THREE.Mesh(
+            new THREE.SphereGeometry(9.6, 48, 48),
+            new THREE.MeshBasicMaterial({ color: 0x000000 })
+        );
+        scene.add(singularityMesh);
+
+        // =========================================================================
+        // 6. SWARM OBJECTS & GPGPU PHYSICS ENGINE (Exact Original Architecture)
+        // =========================================================================
+        const dummy = new THREE.Object3D();
+        const color = new THREE.Color();
+        const target = new THREE.Vector3();
+
+        const geometry = new THREE.TetrahedronGeometry(0.26).clone();
+        const W = Math.ceil(Math.sqrt(COUNT));
+        const H = W;
+        const references = new Float32Array(COUNT * 2);
+        for (let i = 0; i < COUNT; i++) {
+            references[i * 2] = ((i % W) + 0.5) / W;
+            references[i * 2 + 1] = (Math.floor(i / W) + 0.5) / H;
+        }
+        geometry.setAttribute('reference', new THREE.InstancedBufferAttribute(references, 2));
+
+        const scales = new Float32Array(COUNT);
+        const opacities = new Float32Array(COUNT);
+        for (let i = 0; i < COUNT; i++) { scales[i] = 1.0; opacities[i] = 1.0; }
+        geometry.setAttribute('instanceScale', new THREE.InstancedBufferAttribute(scales, 1));
+        geometry.setAttribute('instanceOpacity', new THREE.InstancedBufferAttribute(opacities, 1));
+
+        const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const applyGPGPU = (mat) => {
+            mat.onBeforeCompile = (shader) => {
+                shader.uniforms.texturePosition = { value: null };
+                shader.uniforms.gpgpuEnabled = { value: 1.0 };
+                mat.userData.shader = shader;
+
+                shader.vertexShader = `
+                    attribute vec2 reference;
+                    attribute float instanceScale;
+                    attribute float instanceOpacity;
+                    varying float vInstanceOpacity;
+                    uniform sampler2D texturePosition;
+                    uniform float gpgpuEnabled;
+                ` + shader.vertexShader;
+
+                shader.vertexShader = shader.vertexShader.replace(
+                    '#include <project_vertex>',
+                    `
+                    vec4 mvPosition = vec4( transformed, 1.0 );
+                    #ifdef USE_BATCHING
+                        mvPosition = batchingMatrix * mvPosition;
+                    #endif
+                    #ifdef USE_INSTANCING
+                        mvPosition.xyz *= instanceScale;
+                        vInstanceOpacity = instanceOpacity;
+                        mat4 m = instanceMatrix;
+                        if (gpgpuEnabled > 0.5) {
+                            m[3] = vec4(0.0, 0.0, 0.0, 1.0);
+                        }
+                        mvPosition = m * mvPosition;
+                        if (gpgpuEnabled > 0.5) {
+                            mvPosition.xyz += texture2D(texturePosition, reference).xyz;
+                        } else {
+                            mvPosition.xyz += vec3(instanceMatrix[3][0], instanceMatrix[3][1], instanceMatrix[3][2]);
+                        }
+                    #endif
+                    mvPosition = modelViewMatrix * mvPosition;
+                    gl_Position = projectionMatrix * mvPosition;
+                    `
+                );
+
+                shader.fragmentShader = `varying float vInstanceOpacity;` + shader.fragmentShader;
+                shader.fragmentShader = shader.fragmentShader.replace(
+                    '#include <color_fragment>',
+                    `
+                    #include <color_fragment>
+                    diffuseColor.a *= vInstanceOpacity;
+                    `
+                );
+            };
+            mat.needsUpdate = true;
+        };
+        applyGPGPU(material);
+
+        const instancedMesh = new THREE.InstancedMesh(geometry, material, COUNT);
+        instancedMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        scene.add(instancedMesh);
+
+        const positions = [];
+        const targets = [];
+        for (let i = 0; i < COUNT; i++) {
+            const p = new THREE.Vector3((Math.random() - 0.5) * 100, (Math.random() - 0.5) * 100, (Math.random() - 0.5) * 100);
+            positions.push(p.clone());
+            targets.push(p.clone());
+            instancedMesh.setColorAt(i, color.setHex(0x38bdf8));
+        }
+
+        let targetTex = new THREE.DataTexture(new Float32Array(W * H * 4), W, H, THREE.RGBAFormat, THREE.FloatType);
+        function updateGPGPUTargets() {
+            const data = targetTex.image.data;
+            for (let i = 0; i < W * H; i++) {
+                const idx = i * 4;
+                if (i < COUNT && i < targets.length) {
+                    const p = targets[i];
+                    data[idx] = p.x;
+                    data[idx + 1] = p.y;
+                    data[idx + 2] = p.z;
+                } else {
+                    data[idx] = 999999.0;
+                    data[idx + 1] = 999999.0;
+                    data[idx + 2] = 999999.0;
+                }
+                data[idx + 3] = 1.0;
+            }
+            targetTex.needsUpdate = true;
+        }
+
+        const gpuCompute = new GPUComputationRenderer(W, H, renderer);
+        const dtPosition = gpuCompute.createTexture();
+        const dtVelocity = gpuCompute.createTexture();
+
+        const posArray = dtPosition.image.data;
+        const velArray = dtVelocity.image.data;
+        for (let i = 0; i < W * H; i++) {
+            const idx = i * 4;
+            posArray[idx] = (Math.random() - 0.5) * 100;
+            posArray[idx + 1] = (Math.random() - 0.5) * 100;
+            posArray[idx + 2] = (Math.random() - 0.5) * 100;
+            posArray[idx + 3] = 1.0;
+            velArray[idx] = 0.0;
+            velArray[idx + 1] = 0.0;
+            velArray[idx + 2] = 0.0;
+            velArray[idx + 3] = 0.0;
+        }
+
+        const posShader = `
+            void main() {
+                vec2 uv = gl_FragCoord.xy / resolution.xy;
+                vec3 pos = texture2D(texturePosition, uv).xyz;
+                vec3 vel = texture2D(textureVelocity, uv).xyz;
+                pos += vel * 0.016;
+                gl_FragColor = vec4(pos, 1.0);
+            }
+        `;
+
+        const velShader = `
+            uniform float uTime;
+            uniform float uDeltaTime;
+            uniform float uStiffness;
+            uniform float uDamping;
+            uniform float uNoiseStrength;
+            uniform int uPhysicsMode;
+            uniform int uMouseMode;
+            uniform float uMouseInfluence;
+            uniform vec3 uMouse3D;
+            uniform sampler2D textureTarget;
+            uniform vec3 uGravity;
+            uniform vec3 uShockwaveCenter;
+            uniform float uShockwaveForce;
+            uniform float uShockwaveRadius;
+
+            void main() {
+                vec2 uv = gl_FragCoord.xy / resolution.xy;
+                vec3 pos = texture2D(texturePosition, uv).xyz;
+                vec3 vel = texture2D(textureVelocity, uv).xyz;
+                vec3 target = texture2D(textureTarget, uv).xyz;
+
+                vec3 force = vec3(0.0);
+
+                // Target Attraction (Crisp LERP-spring tracking from original engine)
+                vec3 desiredVel = (target - pos) * 25.0;
+                force += (desiredVel - vel) * 40.0;
+
+                // Limitless Infinity Barrier around Cursor (Zeno's Paradox: space divides infinitely)
+                if (uMouseMode > 0) {
+                    float d = distance(pos, uMouse3D);
+                    float radius = uMouseInfluence * 14.0;
+                    if (d < radius && d > 0.1) {
+                        float strength = (1.0 - d / radius);
+                        vec3 mouseDir = normalize(pos - uMouse3D);
+                        vec3 tangent = normalize(cross(mouseDir, vec3(0.0, 0.0, 1.0)));
+                        // Deflects and swirls particles around the invisible Infinity barrier
+                        force += (mouseDir * 240.0 + tangent * 120.0) * strength;
+                    }
+                }
+
+                // Shockwave (Red / Hollow Purple / Domain Expansion Blast)
+                if (uShockwaveForce > 0.0) {
+                    float d = distance(pos, uShockwaveCenter);
+                    if (d < uShockwaveRadius && d > 0.1) {
+                        float shockStrength = (1.0 - (d / uShockwaveRadius)) * uShockwaveForce;
+                        vec3 shockDir = normalize(pos - uShockwaveCenter);
+                        force += shockDir * shockStrength * 550.0;
+                    }
+                }
+
+                vel += force * uDeltaTime;
+                vel *= (1.0 - uDamping);
+
+                float maxVel = 800.0;
+                if (length(vel) > maxVel) {
+                    vel = normalize(vel) * maxVel;
+                }
+
+                gl_FragColor = vec4(vel, 1.0);
+            }
+        `;
+
+        const positionVariable = gpuCompute.addVariable("texturePosition", posShader, dtPosition);
+        const velocityVariable = gpuCompute.addVariable("textureVelocity", velShader, dtVelocity);
+        gpuCompute.setVariableDependencies(positionVariable, [positionVariable, velocityVariable]);
+        gpuCompute.setVariableDependencies(velocityVariable, [positionVariable, velocityVariable]);
+
+        const velocityUniforms = velocityVariable.material.uniforms;
+        velocityUniforms.uTime = { value: 0.0 };
+        velocityUniforms.uDeltaTime = { value: 0.016 };
+        velocityUniforms.uPhysicsMode = { value: 0 };
+        velocityUniforms.uMouseMode = { value: 1 };
+        velocityUniforms.uMouseInfluence = { value: 1.6 };
+        velocityUniforms.uMouse3D = { value: new THREE.Vector3(9999, 9999, 9999) };
+        velocityUniforms.textureTarget = { value: targetTex };
+        velocityUniforms.uStiffness = { value: STIFFNESS };
+        velocityUniforms.uDamping = { value: DAMPING };
+        velocityUniforms.uNoiseStrength = { value: NOISE_STRENGTH };
+        velocityUniforms.uGravity = { value: new THREE.Vector3() };
+        velocityUniforms.uShockwaveCenter = { value: new THREE.Vector3() };
+        velocityUniforms.uShockwaveForce = { value: 0.0 };
+        velocityUniforms.uShockwaveRadius = { value: 140.0 };
+
+        gpuCompute.init();
+
+        // =========================================================================
+        // 7. CURSOR INFINITY BARRIER & UI CONTROLS
+        // =========================================================================
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2(99, 99);
+        const dummyPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+        const intersectPoint = new THREE.Vector3(9999, 9999, 9999);
+
+        window.addEventListener('pointermove', (e) => {
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        });
+
+        window.addEventListener('pointerdown', (e) => {
+            if (e.target.tagName === 'CANVAS') {
+                jjkState.shockwaveForce = 1.6;
+                jjkState.shockwaveRadius = 70.0;
+                velocityUniforms.uShockwaveCenter.value.copy(intersectPoint);
+            }
+        });
+
+        const calloutEl = document.getElementById('anime-callout');
+        const calloutJp = document.getElementById('callout-jp');
+        const calloutEn = document.getElementById('callout-en');
+        const realmIndicator = document.getElementById('realm-indicator');
+        let calloutTimer = null;
+
+        function triggerCallout(jp, en, glowHex) {
+            calloutJp.textContent = jp;
+            calloutEn.textContent = en;
+            calloutJp.style.textShadow = `0 0 28px ${glowHex}, 0 0 56px ${glowHex}`;
+            calloutEl.classList.add('show');
+            if (calloutTimer) clearTimeout(calloutTimer);
+            calloutTimer = setTimeout(() => calloutEl.classList.remove('show'), 2200);
+        }
+
+        function setMode(newMode) {
+            jjkState.mode = newMode;
+            jjkState.modeElapsed = 0.0;
+
+            document.querySelectorAll('[data-mode]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.mode === newMode);
+            });
+
+            audioEngine.playTechnique(newMode);
+
+            if (newMode === 'odyssey') {
+                jjkState.invertFlash = 0.55;
+                triggerCallout("領域展開「無量空処」", "Unlimited Void // Full Sensory Odyssey", "rgba(56, 189, 248, 0.95)");
+            } else if (newMode === 'sixeyes') {
+                triggerCallout("六眼「覚醒」", "The Six Eyes // Atomic Cursed Perception", "rgba(125, 211, 252, 0.95)");
+            } else if (newMode === 'void') {
+                jjkState.invertFlash = 0.95; // Iconic anime B&W negative flash!
+                jjkState.shockwaveForce = 1.8;
+                jjkState.shockwaveRadius = 160.0;
+                velocityUniforms.uShockwaveCenter.value.set(0, 0, 0);
+                triggerCallout("領域展開「無量空処」", "Domain Expansion: Unlimited Void", "rgba(255, 255, 255, 0.95)");
+            } else if (newMode === 'blue') {
+                triggerCallout("術式順転「蒼」", "Cursed Technique Lapse: Blue", "rgba(0, 210, 255, 0.95)");
+            } else if (newMode === 'red') {
+                jjkState.invertFlash = 0.35;
+                jjkState.shockwaveForce = 3.6;
+                jjkState.shockwaveRadius = 185.0;
+                velocityUniforms.uShockwaveCenter.value.set(0, 0, 0);
+                triggerCallout("術式反転「赫」", "Cursed Technique Reversal: Red", "rgba(239, 68, 68, 0.95)");
+            } else if (newMode === 'purple') {
+                jjkState.invertFlash = 0.85;
+                jjkState.shockwaveForce = 2.6;
+                jjkState.shockwaveRadius = 175.0;
+                velocityUniforms.uShockwaveCenter.value.set(0, 0, 0);
+                triggerCallout("虚式「茈」", "Hollow Technique: Purple", "rgba(217, 70, 239, 0.95)");
+            }
+        }
+
+        document.querySelectorAll('[data-mode]').forEach(btn => {
+            btn.addEventListener('click', () => setMode(btn.dataset.mode));
+        });
+
+        // Audio toggle
+        const btnAudio = document.getElementById('btn-audio');
+        const audioIcon = document.getElementById('audio-icon');
+        const audioLabel = document.getElementById('audio-label');
+        btnAudio.addEventListener('click', () => {
+            const on = audioEngine.toggle();
+            audioIcon.textContent = on ? '🔊' : '🔇';
+            audioLabel.textContent = on ? 'AUDIO ON' : 'AUDIO OFF';
+            btnAudio.classList.toggle('text-sky-300', on);
+            if (on) audioEngine.playTechnique(jjkState.mode);
+        });
+
+        // Parameters popover
+        const paramsPopover = document.getElementById('params-popover');
+        document.getElementById('btn-params').addEventListener('click', () => {
+            paramsPopover.classList.toggle('hidden');
+        });
+
+        document.getElementById('inp-speed').addEventListener('input', (e) => {
+            PARAMS.flightSpeed = parseFloat(e.target.value);
+            document.getElementById('lbl-speed').textContent = PARAMS.flightSpeed.toFixed(2);
+        });
+        document.getElementById('inp-vibrance').addEventListener('input', (e) => {
+            PARAMS.vibrance = parseFloat(e.target.value);
+            document.getElementById('lbl-vibrance').textContent = PARAMS.vibrance.toFixed(2);
+        });
+        document.getElementById('inp-sway').addEventListener('input', (e) => {
+            PARAMS.camSway = parseFloat(e.target.value);
+            document.getElementById('lbl-sway').textContent = PARAMS.camSway.toFixed(2);
+        });
+
+        // HUD Hide/Show
+        const hudRoot = document.getElementById('hud-root');
+        const btnShowHud = document.getElementById('btn-show-hud');
+        function toggleHud() {
+            const hidden = hudRoot.classList.toggle('hidden');
+            btnShowHud.classList.toggle('hidden', !hidden);
+        }
+        document.getElementById('btn-hide-hud').addEventListener('click', toggleHud);
+        btnShowHud.addEventListener('click', toggleHud);
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === '0') setMode('odyssey');
+            else if (e.key === '1') setMode('sixeyes');
+            else if (e.key === '2' || e.code === 'Space') { e.preventDefault(); setMode('void'); }
+            else if (e.key === '3') setMode('blue');
+            else if (e.key === '4') setMode('red');
+            else if (e.key === '5') setMode('purple');
+            else if (e.key.toLowerCase() === 'h') toggleHud();
+        });
+
+        // =========================================================================
+        // 8. ANIMATION LOOP — 4-STAGE UNLIMITED VOID LOGARITHMIC ODYSSEY + TECHNIQUES
+        // =========================================================================
+        const clock = new THREE.Clock();
+        const TAU = 6.283185307179586;
+        const PI = 3.141592653589793;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const delta = Math.min(clock.getDelta(), 0.05);
+            const time = clock.getElapsedTime() * SPEED_MULT;
+            jjkState.modeElapsed += delta;
+
+            // Decay flash & shockwave smoothly
+            jjkState.invertFlash *= Math.pow(0.03, delta);
+            jjkState.shockwaveForce *= Math.pow(0.08, delta);
+
+            // Update cursor 3D projection
+            dummyPlane.normal.copy(camera.position).normalize();
+            raycaster.setFromCamera(mouse, camera);
+            raycaster.ray.intersectPlane(dummyPlane, intersectPoint);
+            velocityUniforms.uMouse3D.value.copy(intersectPoint);
+
+            controls.update();
+
+            const flightSpeed = PARAMS.flightSpeed;
+            const camSway = PARAMS.camSway;
+            const aperture = PARAMS.aperture;
+            const vibrance = PARAMS.vibrance;
+            const journey = time * flightSpeed;
+
+            // Update dynamic HUD indicator & Singularity Sphere scale
+            let targetCoreScale = 0.001;
+            if (jjkState.mode === 'odyssey') {
+                const activeStage = Math.floor(journey + 0.5) % 4;
+                if (activeStage === 0) {
+                    realmIndicator.textContent = "STAGE I // THE SIX EYES (六眼) AWAKENING";
+                    targetCoreScale = 0.001;
+                } else if (activeStage === 1) {
+                    realmIndicator.textContent = "STAGE II // UNLIMITED VOID SINGULARITY (無量空処)";
+                    targetCoreScale = 1.05;
+                } else if (activeStage === 2) {
+                    realmIndicator.textContent = "STAGE III // INFINITE INFORMATION TORRENT (知覚の強制)";
+                    targetCoreScale = 0.75;
+                } else {
+                    realmIndicator.textContent = "STAGE IV // LIMITLESS ASYMPTOTIC GEOMETRY (無下限)";
+                    targetCoreScale = 0.55;
+                }
+            } else if (jjkState.mode === 'sixeyes') {
+                realmIndicator.textContent = "SIX EYES (六眼) // ATOMIC CURSED ENERGY VISION";
+                targetCoreScale = 0.001;
+            } else if (jjkState.mode === 'void') {
+                realmIndicator.textContent = "DOMAIN EXPANSION // UNLIMITED VOID (領域展開・無量空処)";
+                targetCoreScale = 1.12 + Math.sin(time * 3.0) * 0.05;
+            } else if (jjkState.mode === 'blue') {
+                realmIndicator.textContent = "CURSED TECHNIQUE LAPSE // BLUE (術式順転「蒼」)";
+                targetCoreScale = 0.35;
+            } else if (jjkState.mode === 'red') {
+                realmIndicator.textContent = "CURSED TECHNIQUE REVERSAL // RED (術式反転「赫」)";
+                targetCoreScale = 0.001;
+            } else if (jjkState.mode === 'purple') {
+                realmIndicator.textContent = "HOLLOW TECHNIQUE // PURPLE (虚式「茈」)";
+                targetCoreScale = 0.001;
+            }
+
+            singularityMesh.scale.lerp(new THREE.Vector3(targetCoreScale, targetCoreScale, targetCoreScale), 0.14);
+
+            // Post-processing reactive updates
+            bgCompositePass.uniforms['uInvert'].value = jjkState.invertFlash;
+            rgbShiftPass.uniforms['amount'].value = 0.0022 + jjkState.invertFlash * 0.012 + (jjkState.mode === 'purple' ? 0.0045 : 0.0);
+            bloomPass.strength = (jjkState.mode === 'purple' || jjkState.mode === 'void') ? 1.25 : 1.02;
+
+            // 6-DOF Camera Gimbal Transform (Preserved from original file)
+            const camX = Math.sin(time * 0.52) * 4.5 * camSway;
+            const camY = Math.cos(time * 0.39) * 3.5 * camSway;
+            const camRoll = Math.sin(time * 0.34) * 0.22 * camSway;
+            const camPitch = Math.cos(time * 0.29) * 0.13 * camSway;
+            const camYaw = Math.sin(time * 0.23) * 0.15 * camSway;
+
+            const cY = Math.cos(camYaw), sY = Math.sin(camYaw);
+            const cP = Math.cos(camPitch), sP = Math.sin(camPitch);
+            const cR = Math.cos(camRoll), sR = Math.sin(camRoll);
+
+            // =====================================================================
+            // 20,000 PARTICLE SIMULATION LOOP
+            // =====================================================================
+            for (let i = 0; i < COUNT; i++) {
+                const u = i / (COUNT + 0.0001);
+                let wx = 0.0, wy = 0.0, wz = 0.0;
+                let hue = 0.55, sat = 0.90, lum = 0.55;
+                let pScale = 1.0, pAlpha = 0.88;
+
+                // Golden-ratio hashes
+                const h1 = (i * 0.618033988749895) % 1.0;
+                const h2 = (i * 0.381966011250105) % 1.0;
+                const h3 = (i * 0.754877666246692) % 1.0;
+
+                if (jjkState.mode === 'odyssey') {
+                    // =============================================================
+                    // SEAMLESS 4-STAGE LOGARITHMIC UNLIMITED VOID ODYSSEY
+                    // =============================================================
+                    if (u < 0.90) {
+                        const layer = i & 1;
+                        const shiftedT = journey * 0.5 + (1.0 - layer) * 0.5;
+                        const cycleIdx = Math.floor(shiftedT);
+                        const p = shiftedT - cycleIdx;
+                        const stageId = ((cycleIdx * 2 + layer) % 4 + 4) % 4;
+                        const lu = u / 0.90;
+
+                        let lx = 0.0, ly = 0.0, lz = 0.0;
+
+                        if (stageId === 0) {
+                            // -----------------------------------------------------
+                            // STAGE 0: GOJO SATORU'S SIX EYES (六眼 - RIKUGAN)
+                            // Luminous crystal-sky iris fibers, white-cyan pupil ring
+                            // -----------------------------------------------------
+                            const pupilRad = 10.5 * aperture;
+                            const irisRad = 45.0;
+
+                            if (lu < 0.70) {
+                                // Crystalline Six Eyes Iris Stroma
+                                const iu = lu / 0.70;
+                                const numFibers = 210.0;
+                                const fIdx = Math.floor(iu * numFibers);
+                                const fPos = (iu * numFibers) - fIdx;
+                                const baseAng = (fIdx / numFibers) * TAU + Math.sin(time * 0.3) * 0.04;
+                                const wave = Math.sin(fPos * PI * 3.5 + fIdx * 1.9 - time * 1.5) * 0.04 * Math.sin(fPos * PI);
+                                const ang = baseAng + wave;
+
+                                const pBreath = pupilRad * (1.0 + Math.sin(time * 2.0) * 0.06);
+                                const r = pBreath + fPos * (irisRad - pBreath);
+
+                                lx = Math.cos(ang) * r;
+                                ly = Math.sin(ang) * r;
+                                const collarette = Math.exp(-Math.pow((fPos - 0.25) * 8.5, 2.0)) * 2.5;
+                                lz = -fPos * 4.5 + collarette;
+
+                                if (fPos < 0.24) {
+                                    // Incandescent Ice-White / Sky-Cyan Inner Ring
+                                    hue = 0.54;
+                                    sat = 0.35 + fPos * 1.8;
+                                    lum = 0.78 - fPos * 0.4;
+                                } else if (fPos < 0.88) {
+                                    // Electric Cerulean & Six Eyes Azure Fibers
+                                    const shimmer = Math.sin(fIdx * 2.5 + fPos * 7.0 - time * 2.0) * 0.5 + 0.5;
+                                    hue = 0.53 + 0.05 * Math.cos(fIdx * 0.5) + shimmer * 0.04;
+                                    sat = 0.92;
+                                    lum = 0.45 + shimmer * 0.35;
+                                } else {
+                                    // Deep Cobalt-Violet Limbal Ring
+                                    hue = 0.64;
+                                    sat = 0.95;
+                                    lum = 0.30 + (1.0 - fPos) * 1.4;
+                                }
+                                pScale = 0.95 + (1.0 - fPos) * 0.5;
+                            } else {
+                                // Corneal Dome & Luminous White Catchlights (Anime Eye Highlights)
+                                const cu = (lu - 0.70) / 0.30;
+                                const r = pupilRad * 0.85 + Math.sqrt(cu) * (irisRad * 0.95);
+                                const ang = i * 2.3999632 + time * 0.15;
+                                lx = Math.cos(ang) * r;
+                                ly = Math.sin(ang) * r;
+                                lz = Math.cos(Math.min(1.0, r / irisRad) * PI * 0.5) * 14.0;
+
+                                // Signature anime upper-right & lower-left eye highlights
+                                const d1 = Math.hypot(lx - 13.5, ly - 13.5);
+                                const d2 = Math.hypot(lx + 15.0, ly + 11.0);
+                                const catchLight = Math.max(Math.max(0.0, 1.0 - d1 * 0.11), Math.max(0.0, 1.0 - d2 * 0.14));
+
+                                hue = 0.55;
+                                sat = 0.80 - catchLight * 0.75;
+                                lum = 0.42 + catchLight * 0.56;
+                                pScale = 0.85 + catchLight * 1.25;
+                            }
+
+                        } else if (stageId === 1) {
+                            // -----------------------------------------------------
+                            // STAGE 1: UNLIMITED VOID EVENT HORIZON (無量空処)
+                            // Pitch-black void surrounded by blinding white-cyan accretion ring & lensing arcs
+                            // -----------------------------------------------------
+                            if (lu < 0.48) {
+                                // Blinding White-Cyan Event Horizon Accretion Halo
+                                const au = lu / 0.48;
+                                const ang = au * TAU * 19.0 + time * 1.4;
+                                const spread = Math.pow(h1, 2.3) * 6.5;
+                                const r = (10.5 * aperture) + spread;
+
+                                lx = Math.cos(ang) * r;
+                                ly = Math.sin(ang) * r;
+                                lz = (h2 - 0.5) * (2.2 + spread * 0.5);
+
+                                const heat = 1.0 - (spread / 6.5);
+                                hue = 0.55 + (1.0 - heat) * 0.18;
+                                sat = 0.10 + (1.0 - heat) * 0.85;
+                                lum = 0.65 + heat * 0.35;
+                                pScale = 1.05 + heat * 0.9;
+                            } else {
+                                // Gravitational Lensing Arcs & Surrounding Cosmic Void Dust
+                                const gu = (lu - 0.48) / 0.52;
+                                const arm = i & 3;
+                                const rNorm = Math.pow(gu, 0.8);
+                                const r = (14.0 * aperture) + rNorm * 58.0;
+                                const ang = Math.log(1.0 + rNorm * 6.0) * 2.4 + arm * (TAU * 0.25) - time * 0.45 + (h1 - 0.5) * 0.35;
+
+                                lx = Math.cos(ang) * r;
+                                ly = Math.sin(ang) * r;
+                                lz = (h2 - 0.5) * 12.0 + Math.sin(ang * 2.0) * (rNorm * 6.0);
+
+                                hue = 0.56 + rNorm * 0.20; // Sky-blue to deep cursed violet
+                                sat = 0.90;
+                                lum = 0.48 + (1.0 - rNorm) * 0.35;
+                                pScale = 0.9 + h3 * 0.5;
+                            }
+
+                        } else if (stageId === 2) {
+                            // -----------------------------------------------------
+                            // STAGE 2: INFINITE INFORMATION TORRENT (知覚と伝達の強制)
+                            // Towering vertical & radial light pillars of endless perception
+                            // -----------------------------------------------------
+                            const numPillars = 84.0;
+                            const pIdx = Math.floor(lu * numPillars);
+                            const pFrac = (lu * numPillars) - pIdx;
+                            const streamPhase = (pFrac + time * (0.45 + (pIdx % 5) * 0.12)) % 1.0;
+
+                            const ang = (pIdx / numPillars) * TAU + Math.sin(time * 0.25) * 0.15;
+                            const corridorR = (13.0 * aperture) + (pIdx % 6) * 8.5 + h1 * 4.0;
+
+                            lx = Math.cos(ang) * corridorR;
+                            ly = (streamPhase - 0.5) * 115.0;
+                            lz = Math.sin(ang) * corridorR;
+
+                            const pulse = Math.sin(streamPhase * PI);
+                            const isWhiteData = (pIdx % 4 === 0);
+                            hue = isWhiteData ? 0.55 : (0.54 + (pIdx % 3) * 0.11);
+                            sat = isWhiteData ? 0.20 : 0.92;
+                            lum = 0.45 + pulse * 0.50;
+                            pScale = (0.75 + pulse * 0.95);
+
+                        } else {
+                            // -----------------------------------------------------
+                            // STAGE 3: LIMITLESS ASYMPTOTIC GEOMETRY (無下限呪術)
+                            // Interlocking sacred rings & Zeno's convergence curves
+                            // -----------------------------------------------------
+                            const ringIdx = i % 5;
+                            const rBase = (15.0 * aperture) + ringIdx * 10.5;
+                            const ang = lu * TAU * 7.0 + time * 0.55 * ((ringIdx & 1) ? 1.0 : -1.0);
+                            const wave = Math.sin(ang * (3.0 + ringIdx) + time * 1.5) * 2.2;
+
+                            const rx = (rBase + wave) * Math.cos(ang);
+                            const ry = (rBase + wave) * Math.sin(ang);
+                            const rz = (ringIdx - 2.0) * 9.0 + Math.cos(ang * 4.0) * 3.0;
+
+                            // Tilt rings in 3D space like nested gyroscopes
+                            const tilt = ringIdx * 0.42;
+                            lx = rx;
+                            ly = ry * Math.cos(tilt) - rz * Math.sin(tilt);
+                            lz = ry * Math.sin(tilt) + rz * Math.cos(tilt);
+
+                            hue = (ringIdx % 2 === 0) ? 0.54 : 0.76;
+                            sat = 0.92;
+                            lum = 0.58 + 0.28 * Math.sin(ang * 3.0);
+                            pScale = 1.05;
+                        }
+
+                        // Logarithmic Scale Expansion & Z-Flight (Exact smooth transition from original file)
+                        const relP = p - 0.5;
+                        const zoomScale = Math.pow(7.2, relP * 2.0);
+                        const zFlight = relP * 145.0;
+                        const splineX = Math.sin(time * 0.65 - relP * 3.2) * relP * 32.0 * camSway;
+                        const splineY = Math.cos(time * 0.48 - relP * 2.6) * relP * 24.0 * camSway;
+
+                        wx = lx * zoomScale + splineX;
+                        wy = ly * zoomScale + splineY;
+                        wz = lz * zoomScale + zFlight;
+
+                        const env = Math.sin(p * PI);
+                        const smoothEnv = Math.pow(Math.max(0.0, env), 0.62);
+                        pAlpha = Math.min(1.0, smoothEnv * 0.95);
+                        pScale = pScale * (0.55 + 0.85 * Math.pow(p, 0.7)) * smoothEnv;
+                        lum = lum * (0.35 + 0.65 * smoothEnv) * vibrance;
+
+                    } else {
+                        // Continuous Infinite Sensory Light-Streak Tunnel (10% of particles)
+                        const wu = (u - 0.90) / 0.10;
+                        const streamZ = (wu + journey * 0.95) % 1.0;
+                        const relZ = streamZ - 0.5;
+
+                        const tunnelR = (13.5 * aperture) + Math.pow(h1, 0.7) * 76.0;
+                        const tunnelAng = wu * TAU * 37.0 + time * 0.25;
+                        const pathX = Math.sin(time * 0.65 - relZ * 3.2) * relZ * 32.0 * camSway;
+                        const pathY = Math.cos(time * 0.48 - relZ * 2.6) * relZ * 24.0 * camSway;
+
+                        wx = Math.cos(tunnelAng) * tunnelR + pathX;
+                        wy = Math.sin(tunnelAng) * tunnelR + pathY;
+                        wz = relZ * 175.0;
+
+                        const streakEnv = Math.sin(streamZ * PI);
+                        hue = (i % 3 === 0) ? 0.54 : (0.54 + h2 * 0.22);
+                        sat = (i % 5 === 0) ? 0.15 : 0.88;
+                        lum = (0.45 + streakEnv * 0.52) * vibrance;
+                        pScale = (0.55 + streamZ * 1.45) * streakEnv;
+                        pAlpha = streakEnv * 0.82;
+                    }
+
+                } else if (jjkState.mode === 'sixeyes') {
+                    // =============================================================
+                    // DEDICATED MODE 1: THE SIX EYES (六眼 - FULL SCREEN IRIS)
+                    // =============================================================
+                    const pupilRad = 11.5;
+                    const irisRad = 48.0;
+                    if (u < 0.76) {
+                        const iu = u / 0.76;
+                        const fIdx = Math.floor(iu * 240.0);
+                        const fPos = (iu * 240.0) - fIdx;
+                        const ang = (fIdx / 240.0) * TAU + Math.sin(fPos * PI * 4.0 + fIdx * 1.7 - time * 1.8) * 0.045;
+                        const r = pupilRad + fPos * (irisRad - pupilRad);
+
+                        wx = Math.cos(ang) * r;
+                        wy = Math.sin(ang) * r;
+                        wz = -fPos * 5.5 + Math.exp(-Math.pow((fPos - 0.24) * 8.0, 2.0)) * 3.2;
+
+                        const shimmer = Math.sin(fIdx * 2.3 + fPos * 8.0 - time * 2.5) * 0.5 + 0.5;
+                        hue = 0.54 + shimmer * 0.06;
+                        sat = fPos < 0.22 ? 0.30 : 0.92;
+                        lum = (fPos < 0.22 ? 0.82 : (0.45 + shimmer * 0.38)) * vibrance;
+                        pScale = 1.0 + (1.0 - fPos) * 0.55;
+                    } else {
+                        // Floating Six Eyes Cursed Energy Wisps & Corneal Catchlight
+                        const cu = (u - 0.76) / 0.24;
+                        const r = pupilRad + Math.sqrt(cu) * irisRad;
+                        const ang = i * 2.3999632 + time * 0.2;
+                        wx = Math.cos(ang) * r;
+                        wy = Math.sin(ang) * r;
+                        wz = Math.cos(Math.min(1.0, r / irisRad) * PI * 0.5) * 15.0;
+
+                        const d1 = Math.hypot(wx - 14.0, wy - 14.0);
+                        const catchL = Math.max(0.0, 1.0 - d1 * 0.10);
+                        hue = 0.55;
+                        sat = 0.85 - catchL * 0.80;
+                        lum = (0.40 + catchL * 0.58) * vibrance;
+                        pScale = 0.9 + catchL * 1.4;
+                    }
+
+                } else if (jjkState.mode === 'void') {
+                    // =============================================================
+                    // DEDICATED MODE 2: DOMAIN EXPANSION: UNLIMITED VOID (無量空処)
+                    // Iconic Black Singularity + Blinding Accretion Ring + Infinite Data Rain
+                    // =============================================================
+                    if (u < 0.28) {
+                        // Blinding Incandescent Event Horizon Accretion Ring
+                        const ru = u / 0.28;
+                        const ang = ru * TAU * 21.0 + time * 1.9;
+                        const spread = Math.pow(h1, 2.4) * 6.0;
+                        const r = 11.2 + spread;
+                        wx = Math.cos(ang) * r;
+                        wy = Math.sin(ang) * r;
+                        wz = (h2 - 0.5) * (2.0 + spread * 0.45);
+
+                        const heat = 1.0 - (spread / 6.0);
+                        hue = 0.55 + (1.0 - heat) * 0.18;
+                        sat = 0.08 + (1.0 - heat) * 0.85;
+                        lum = (0.68 + heat * 0.32) * vibrance;
+                        pScale = 1.1 + heat * 0.9;
+                    } else if (u < 0.66) {
+                        // Rushing Z-Axis Infinite Sensory Light Streaks
+                        const zu = (u - 0.28) / 0.38;
+                        const zPhase = (zu + time * 0.52 + h3) % 1.0;
+                        const relZ = zPhase - 0.5;
+                        const tunnelR = 15.0 + Math.pow(h1, 0.72) * 82.0;
+                        const ang = zu * TAU * 47.0 + time * 0.22;
+
+                        wx = Math.cos(ang) * tunnelR;
+                        wy = Math.sin(ang) * tunnelR;
+                        wz = relZ * 210.0;
+
+                        const env = Math.sin(zPhase * PI);
+                        hue = (i % 4 === 0) ? 0.55 : (0.54 + h2 * 0.23);
+                        sat = (i % 6 === 0) ? 0.15 : 0.90;
+                        lum = (0.48 + env * 0.48) * vibrance;
+                        pScale = (0.65 + zPhase * 1.55) * env;
+                        pAlpha = env * 0.88;
+                    } else {
+                        // Vertical Infinite Information Pillars Framing the Singularity
+                        const vu = (u - 0.66) / 0.34;
+                        const colIdx = Math.floor(vu * 96.0);
+                        const yPhase = ((vu * 96.0 - colIdx) + time * (0.55 + (colIdx % 5) * 0.11)) % 1.0;
+                        const ang = (colIdx / 96.0) * TAU + Math.sin(time * 0.25) * 0.18;
+                        const rad = 28.0 + (colIdx % 7) * 9.5;
+
+                        wx = Math.cos(ang) * rad;
+                        wy = (yPhase - 0.5) * 155.0;
+                        wz = Math.sin(ang) * rad - 12.0;
+
+                        const env = Math.sin(yPhase * PI);
+                        hue = (colIdx % 3 === 0) ? 0.75 : 0.54;
+                        sat = 0.88;
+                        lum = (0.45 + env * 0.45) * vibrance;
+                        pScale = 0.95 * env;
+                        pAlpha = env * 0.82;
+                    }
+
+                } else if (jjkState.mode === 'blue') {
+                    // =============================================================
+                    // DEDICATED MODE 3: CURSED TECHNIQUE LAPSE: BLUE (術式順転「蒼」)
+                    // =============================================================
+                    const implosion = Math.min(1.0, jjkState.modeElapsed * 0.9);
+                    const ang = u * TAU * 34.0 - time * 5.8 + h1 * 1.4;
+                    const maxR = 66.0 * (1.0 - implosion * 0.52);
+                    const r = 3.5 + Math.pow(h2, 1.35) * maxR;
+
+                    wx = Math.cos(ang) * r;
+                    wy = Math.sin(ang) * r;
+                    wz = (h3 - 0.5) * (r * 0.8) + Math.sin(r * 0.28 - time * 6.5) * 5.5;
+
+                    const coreGlow = Math.max(0.0, 1.0 - r / 32.0);
+                    hue = 0.55 + coreGlow * 0.03;
+                    sat = 0.96 - coreGlow * 0.50;
+                    lum = (0.46 + coreGlow * 0.52) * vibrance;
+                    pScale = 0.9 + coreGlow * 1.5;
+
+                } else if (jjkState.mode === 'red') {
+                    // =============================================================
+                    // DEDICATED MODE 4: CURSED TECHNIQUE REVERSAL: RED (術式反転「赫」)
+                    // =============================================================
+                    if (u < 0.24) {
+                        const phi = Math.acos(1.0 - 2.0 * (u / 0.24));
+                        const theta = i * 2.3999632 + time * 6.5;
+                        const r = 4.0 + h1 * 2.2;
+                        wx = r * Math.sin(phi) * Math.cos(theta);
+                        wy = r * Math.sin(phi) * Math.sin(theta);
+                        wz = r * Math.cos(phi);
+                        hue = 0.99; sat = 0.95 - h1 * 0.55; lum = (0.72 + h1 * 0.28) * vibrance; pScale = 1.45;
+                    } else {
+                        const ru = (u - 0.24) / 0.76;
+                        const phi = Math.acos(1.0 - 2.0 * ru);
+                        const theta = i * 2.3999632 - time * 1.6;
+                        const wave = (time * 1.5 + h1) % 1.0;
+                        const r = 9.0 + Math.pow(wave, 0.75) * 88.0;
+                        wx = r * Math.sin(phi) * Math.cos(theta);
+                        wy = r * Math.sin(phi) * Math.sin(theta);
+                        wz = r * Math.cos(phi);
+
+                        const env = Math.sin(wave * PI);
+                        hue = 0.98 + wave * 0.04; sat = 0.96; lum = (0.46 + (1.0 - wave) * 0.48) * vibrance;
+                        pScale = (0.85 + (1.0 - wave) * 1.3) * env; pAlpha = env * 0.92;
+                    }
+
+                } else if (jjkState.mode === 'purple') {
+                    // =============================================================
+                    // DEDICATED MODE 5: HOLLOW TECHNIQUE: PURPLE (虚式「茈」)
+                    // Blue & Red collide at center -> Imaginary Mass Erasure Vortex
+                    // =============================================================
+                    const merge = Math.min(1.0, jjkState.modeElapsed * 1.15);
+                    const sep = (1.0 - merge) * 30.0;
+
+                    if (u < 0.16 && merge < 0.96) {
+                        const phi = Math.acos(1.0 - 2.0 * (u / 0.16));
+                        const theta = i * 2.3999632 + time * 7.5;
+                        const r = 6.2 * (1.0 - merge * 0.35);
+                        wx = -sep + r * Math.sin(phi) * Math.cos(theta);
+                        wy = r * Math.sin(phi) * Math.sin(theta);
+                        wz = r * Math.cos(phi);
+                        hue = 0.56; sat = 0.96; lum = 0.70 * vibrance; pScale = 1.35;
+                    } else if (u < 0.32 && merge < 0.96) {
+                        const phi = Math.acos(1.0 - 2.0 * ((u - 0.16) / 0.16));
+                        const theta = i * 2.3999632 - time * 7.5;
+                        const r = 6.2 * (1.0 - merge * 0.35);
+                        wx = sep + r * Math.sin(phi) * Math.cos(theta);
+                        wy = r * Math.sin(phi) * Math.sin(theta);
+                        wz = r * Math.cos(phi);
+                        hue = 0.99; sat = 0.96; lum = 0.70 * vibrance; pScale = 1.35;
+                    } else {
+                        const pu = (u - 0.32) / 0.68;
+                        if (pu < 0.46) {
+                            const ang = (pu / 0.46) * TAU * 24.0 + time * 6.8;
+                            const r = 2.8 + Math.pow(h1, 1.4) * 24.0;
+                            wx = Math.cos(ang) * r;
+                            wy = Math.sin(ang) * r;
+                            wz = (h2 - 0.5) * 14.0;
+
+                            const core = 1.0 - (r / 26.8);
+                            hue = 0.78 + h3 * 0.08;
+                            sat = 0.95 - core * 0.55;
+                            lum = (0.54 + core * 0.44) * vibrance;
+                            pScale = 1.15 + core * 1.55;
+                        } else {
+                            const bu = (pu - 0.46) / 0.54;
+                            const zPhase = (bu + time * 1.4 + h2) % 1.0;
+                            const relZ = zPhase - 0.5;
+                            const beamR = 4.5 + Math.pow(h1, 1.6) * 44.0;
+                            const ang = bu * TAU * 31.0 - time * 4.8;
+
+                            wx = Math.cos(ang) * beamR;
+                            wy = Math.sin(ang) * beamR;
+                            wz = relZ * 225.0;
+
+                            const env = Math.sin(zPhase * PI);
+                            hue = (i % 4 === 0) ? 0.84 : 0.76;
+                            sat = 0.94;
+                            lum = (0.48 + env * 0.48) * vibrance;
+                            pScale = (0.75 + env * 1.4);
+                            pAlpha = env * 0.92;
+                        }
+                    }
+                }
+
+                // 6-DOF Camera Gimbal Transform
+                const tx = wx - camX;
+                const ty = wy - camY;
+                const tz = wz;
+
+                const x1 = tx * cY - tz * sY;
+                const z1 = tx * sY + tz * cY;
+                const y2 = ty * cP - z1 * sP;
+                const z2 = ty * sP + z1 * cP;
+                const fx = x1 * cR - y2 * sR;
+                const fy = x1 * sR + y2 * cR;
+                const fz = z2;
+
+                target.set(fx, fy, fz);
+                color.setHSL((hue % 1.0 + 1.0) % 1.0, Math.min(1.0, Math.max(0.0, sat)), Math.min(1.0, Math.max(0.0, lum)));
+                scales[i] = Math.min(3.5, Math.max(0.1, pScale));
+                opacities[i] = Math.min(1.0, Math.max(0.0, pAlpha));
+
+                targets[i].copy(target);
+                positions[i].lerp(targets[i], 0.1);
+
+                dummy.position.set(0, 0, 0);
+                dummy.rotation.set(0, 0, 0);
+                dummy.updateMatrix();
+                instancedMesh.setMatrixAt(i, dummy.matrix);
+                instancedMesh.setColorAt(i, color);
+            }
+
+            instancedMesh.instanceColor.needsUpdate = true;
+            instancedMesh.geometry.attributes.instanceScale.needsUpdate = true;
+            instancedMesh.geometry.attributes.instanceOpacity.needsUpdate = true;
+
+            updateGPGPUTargets();
+
+            velocityUniforms.uTime.value = time;
+            velocityUniforms.uDeltaTime.value = delta;
+            velocityUniforms.uShockwaveForce.value = jjkState.shockwaveForce;
+            velocityUniforms.uShockwaveRadius.value = jjkState.shockwaveRadius;
+
+            gpuCompute.compute();
+
+            const posTexture = gpuCompute.getCurrentRenderTarget(positionVariable).texture;
+            if (material.userData.shader) {
+                material.userData.shader.uniforms.texturePosition.value = posTexture;
+                material.userData.shader.uniforms.gpgpuEnabled.value = 1.0;
+            }
+
+            instancedMesh.instanceMatrix.needsUpdate = true;
+            instancedMesh.instanceColor.needsUpdate = true;
+
+            composer.render(delta);
+        }
+
+        window.onload = function () {
+            jjkState.invertFlash = 0.65;
+            triggerCallout("領域展開「無量空処」", "Domain Expansion: Unlimited Void", "rgba(56, 189, 248, 0.95)");
+            animate();
+        };
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
+            bloomPass.resolution.set(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
